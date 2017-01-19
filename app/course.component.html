@@ -1,0 +1,12 @@
+
+<div *ngIf="course">
+	
+<ul class="list">
+	<li class="header">{{ course.title }}</li>
+	<li *ngFor="let chapter of course.chapters" routerLink="/courses/{{ course.id }}/chapters/{{ chapter.id }}">
+		<h3>{{ chapter.title }}</h3>
+		<p class="description">{{ chapter.description }}</p>
+	</li>
+</ul>
+
+</div>
