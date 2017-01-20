@@ -1,5 +1,6 @@
 
 import { Chapter } from './chapter';
+import markdown from './markdown';
 
 export class Course {
 
@@ -11,7 +12,7 @@ export class Course {
     constructor(id: string, title: string, description: string) {
         this.id = id;
         this.title = title;
-        this.description = description;
+        this.description = markdown.makeHtml(description);
         this.chapters = [];
     }
     

@@ -1,12 +1,12 @@
 
-<div *ngIf="course">
-	
-<ul class="list">
+<div class="back-links" *ngIf="course">
+	<a routerLink="/courses" href="/courses" title="Courses Index">Courses</a>
+</div>
+
+<ul class="list" *ngIf="course">
 	<li class="header">{{ course.title }}</li>
-	<li *ngFor="let chapter of course.chapters" routerLink="/courses/{{ course.id }}/chapters/{{ chapter.id }}">
+	<li *ngFor="let chapter of chapters" routerLink="/courses/{{ course.id }}/{{ chapter.id }}">
 		<h3>{{ chapter.title }}</h3>
-		<p class="description">{{ chapter.description }}</p>
+		<p class="description" [innerHTML]="chapter.description"></p>
 	</li>
 </ul>
-
-</div>

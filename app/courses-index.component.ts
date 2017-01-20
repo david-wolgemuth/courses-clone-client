@@ -20,6 +20,5 @@ export class CoursesIndexComponent implements OnInit {
     }
     goToCourse(course: Course): void {
         console.log(course);
-        // this.router.parent.navigate([`/courses/${course.id}`]);
     }
 }

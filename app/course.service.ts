@@ -2,20 +2,26 @@
 import { Injectable } from '@angular/core';
 import { Course } from './course';
 import { Chapter } from './chapter';
-
-const COURSES: Course[] = []
-const titles = ['Web Fundamentals', 'iOS', 'Ruby on Rails', 'C#', 'MEAN', 'Python', 'LAMP']
-titles.forEach((title, id) => {
-    COURSES.push(new Course(id.toString(), title, 'It\'s a course.'));
-})
-COURSES[0].chapters.push(new Chapter(0, 'Chapter Title', 'This is just a chapter'));
+import { Page } from './page';
 
 @Injectable()
 export class CourseService {
-    index(): Promise<Course[]> {
-        return Promise.resolve(COURSES);
+    courses: Course[] = [];
+    constructor() {
+        const titles = ['Web Fundamentals', 'iOS', 'Ruby on Rails', 'C#', 'MEAN', 'Python', 'LAMP']
+        titles.forEach((title, id) => {
+            this.courses.push(new Course(id.toString(), title, 'It\'s a **course**.'));
+        });
+        const c = new Chapter('0', 'Awesome Chapter Title', 'This is *just* a chapter');
+        ['Page1', 'Page2', 'Page3'].forEach((title, id) => {
+            c.pages.push(new Page(id.toString(), title, 'A *page* or a **PAGE**', '# Content\n\n### Sub Header\n\nParagraph 1\n\nParagraph2'));
+        });
+        this.courses[0].chapters.push(c);
     }
-    show(id): Promise<Course> {
-        return Promise.resolve(COURSES[id]);
+    index(): Promise<Course[]> {
+        return Promise.resolve(this.courses);
+    }
+    show(id: string): Promise<Course> {
+        return Promise.resolve(this.courses[id]);
     }
 }

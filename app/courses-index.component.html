@@ -2,6 +2,6 @@
 <ul class="list">
 	<li *ngFor="let course of courses" routerLink="/courses/{{ course.id }}">
 		<h3>{{ course.title }}</h3>
-		<p class="description">{{ course.description }}</p>
+		<p class="description" [innerHTML]="course.description"></p>
 	</li>
 </ul>
