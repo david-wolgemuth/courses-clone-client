@@ -1,36 +1,51 @@
 
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, Input, ElementRef  } from '@angular/core';
 
 import { CourseService } from './course.service';
+import { VisibilityService } from './visiblity.service';
 
 import { Course } from './course';
 import { Chapter } from './chapter';
 import { Page } from './page';
 
+import slideInOut from './slide-in-out.animation';
+
+declare var $:JQueryStatic;
+
 @Component({
-    templateUrl: 'app/page.component.html'    
+    selector: 'page',
+    templateUrl: 'app/page.component.html',
+    animations: [ slideInOut ]
 })
 export class PageComponent {
 
-    course:      Course;
-    chapter:     Chapter;
-    page:        Page;
+    @Input() course:      Course;
+    @Input() chapter:     Chapter;
+    @Input() page:        Page;
+    visible:              boolean;
 
-    private sub: any;
-
-    constructor(private route: ActivatedRoute, private courseService: CourseService) {
-
+    constructor(private courseService: CourseService, private visibilityService: VisibilityService) {
+        this.visible = false;
     }
     ngOnInit(): void {
-        this.sub = this.route.params.subscribe((params:any) => {
-            this.courseService.show(params['course_id'])
-            .then((course:Course) => {
-                this.course = course;
-                this.chapter = course.chapters.find((chapter:Chapter) => chapter.id === params['chapter_id']);
-                this.page = this.chapter.pages.find(page => page.id === params['page_id']);
-            });
+        this.visibilityService.on("page", page => {
+            if (page !== this.page) {
+                this.visible = false; 
+            }
         });
+    }
+    toggle(): void {
+        this.visible = !this.visible;
+        if (this.visible) {
+            this.visibilityService.setVisible(this.page, () => {
+                setTimeout(() => {
+                    const id = `#${ this.course.id }-${ this.chapter.id }-${ this.page.id }`;
+                    $('html, body').animate({
+                        scrollTop: $(id).offset().top - 70;
+                    }, 300);
+                }, 600);
+            });
+        }
     }
 
 }

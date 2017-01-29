@@ -13,12 +13,9 @@ export class CoursesIndexComponent implements OnInit {
 
     }
     ngOnInit(): void {
-        this.courseService.index()
-        .then(courses => {
-            this.courses = courses; 
-        })
+        this.courseService.courses().then(courses => {
+            this.courses = courses;
+        });
     }
-    goToCourse(course: Course): void {
-        console.log(course);
-    }
+    
 }

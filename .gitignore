@@ -1,3 +1,5 @@
+
+db.json
 .idea
 node_modules
 jspm_packages
@@ -10,3 +12,4 @@ e2e/**/*.js.map
 _test-output
 _temp
 .DS_Store
+

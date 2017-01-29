@@ -1,13 +1,13 @@
 
-<div class="back-links" *ngIf="course">
-	<a routerLink="/courses" href="/courses" title="Courses Index">Courses</a>
-	&rsaquo;
-	<a routerLink="/courses/{{ course.id }}" href="/courses/{{ course.id }}" title="{{ course.title }}">{{ course.title }}</a>
-	&rsaquo;
-	<a routerLink="/courses/{{ course.id }}/{{ chapter.id }}" href="/courses/{{ course.id }}/{{ chapter.id }}" title="{{ chapter.title }}">{{ chapter.title }}</a>
-</div>
+<div class="page" id="{{ course.id }}-{{ chapter.id }}-{{ page.id }}">
+		
+	<div class="header" (click)="toggle()">
+		{{ page.title }}
+		<span class="list-tag" [ngClass]="(visible) ? 'list-open-tag' : 'list-closed-tag'"></span>
+	</div>
 
-<ul class="list" *ngIf="page">
-	<li class="header">{{ page.title }}</li>
-	<li [innerHtml]="page.content"></li>
-</ul>
+	<div *ngIf="visible" [@slideInOut] (click)="toggle();">
+		<div class="row" [innerHtml]="page.content"></div>
+	</div>
+
+</div>

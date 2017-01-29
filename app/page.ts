@@ -7,13 +7,14 @@ export class Page {
     title:            string;
     description:      string;
     content:          string;
+    rawContent:       string;
 
-    constructor(id: string, title: string, description: string, content: string) {
+    constructor(page: any) {
 
-        this.id = id;
-        this.title = title;
-        this.description = markdown.makeHtml(description);
-        this.content = markdown.makeHtml(content);
+        this.id = page.id;
+        this.title = page.title;
+        this.rawContent = page.content;
+        this.content = markdown.makeHtml(page.content);
 
     }
 

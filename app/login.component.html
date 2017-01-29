@@ -1,0 +1,10 @@
+
+<h3>Login User</h3>
+<form (ngSubmit)="login()">
+	<label for="email">Email Address</label>
+	<input type="email" name="email" [(ngModel)]="email" placeholder="james@brown.com" required="required">	
+	<label for="password">Password</label>
+	<input type="password" name="password" [(ngModel)]="password" placeholder="Secret123" required="required">
+	<input type="submit" value="Login">
+</form>
+<a href="/register" routerLink="/register" title="Register New User">New User?</a>

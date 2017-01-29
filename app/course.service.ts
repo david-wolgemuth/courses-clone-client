@@ -1,27 +1,108 @@
 
 import { Injectable } from '@angular/core';
+import { Http, Response, Headers, RequestOptions } from '@angular/http';
+
+import { Observable }     from 'rxjs/Observable';
+import './rxjs-operators';
+
 import { Course } from './course';
 import { Chapter } from './chapter';
 import { Page } from './page';
 
+import markdown from './markdown';
+
 @Injectable()
 export class CourseService {
-    courses: Course[] = [];
-    constructor() {
-        const titles = ['Web Fundamentals', 'iOS', 'Ruby on Rails', 'C#', 'MEAN', 'Python', 'LAMP']
-        titles.forEach((title, id) => {
-            this.courses.push(new Course(id.toString(), title, 'It\'s a **course**.'));
-        });
-        const c = new Chapter('0', 'Awesome Chapter Title', 'This is *just* a chapter');
-        ['Page1', 'Page2', 'Page3'].forEach((title, id) => {
-            c.pages.push(new Page(id.toString(), title, 'A *page* or a **PAGE**', '# Content\n\n### Sub Header\n\nParagraph 1\n\nParagraph2'));
-        });
-        this.courses[0].chapters.push(c);
+
+    private _url = 'http://localhost:3000';
+    private _courses: Course[] = [];
+    private headers = new Headers({ 'Content-Type': 'application/json' });
+    private options: RequestOptions;
+
+    constructor(private http: Http) {
+        this.options = new RequestOptions({ headers: this.headers });
     }
-    index(): Promise<Course[]> {
-        return Promise.resolve(this.courses);
+    authenticate(email: string, password: string): Promise<any> {
+        return this.http.post(`${this._url}/sessions`, { 
+            email: email,
+            password: password
+        }, this.options).map((res: Response) => {
+            let body = res.json();
+            return body.data || {};
+        }).toPromise()
+        .catch(this.handleError);
     }
-    show(id: string): Promise<Course> {
-        return Promise.resolve(this.courses[id]);
+    get(url: string): Promise<any> {
+        return this.http.get(`${this._url}${url}`, this.options).toPromise();
+    }
+    courses(): Promise<Course[]> {
+        if (this._courses.length > 0) {
+            return Promise.resolve(this._courses);
+        }
+        return this.get('/courses')
+        .then((res: Response) => {
+            let body = res.json();
+            this._courses = body.courses.map((course: any) => {
+                return new Course(course);
+            })
+            return this._courses;
+        })//.toPromise();
+    }
+    course(id: string): Promise<Course> {
+        var index: number = 0;
+        for (var i = 0; i < this._courses.length; i++) {
+            if (this._courses[i].id === id.toString()) {
+                if (this._courses[i].chapters) {
+                    return Promise.resolve(this._courses[i]);
+                } else {
+                    index = i;
+                    break;
+                }
+            }
+        }
+        if (index < 0) {
+            index = this._courses.length;
+        }
+            console.log("huh?");
+        return this.get(`/courses/${id}`)
+        .then((res: Response) => {
+            let course: Course = new Course(res.json().course);
+            this._courses[index].chapters = course.chapters;
+            return course;
+        });
+    }
+    chapter(courseId: string, chapterId: string): Promise<Chapter> {
+        return this.course(courseId).then((course: Course) => {
+            var index: any, chapter: any;
+            for (let i = 0; i < course.chapters.length; i++) {
+                if (course.chapters[i].id === chapterId) {
+                    index = i;
+                    chapter = course.chapters[i];
+                    break;
+                }
+            }
+            if (chapter && chapter.pages) {
+                return Promise.resolve(chapter);
+            }
+            return this.get(`/courses/${courseId}/${chapterId}`)
+            .then((res: Response) => {
+                let body = res.json();
+                let chapter: Chapter = new Chapter(body.chapter);
+                course.chapters[index].pages = chapter.pages;
+                return chapter;
+            });
+        })
+    }
+    private handleError (error: Response | any) {
+        let errMsg: string;
+        if (error instanceof Response) {
+          const body = error.json() || '';
+          const err = body.error || JSON.stringify(body);
+          errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
+        } else {
+          errMsg = error.message ? error.message : error.toString();
+        }
+        console.error(errMsg);
+        return Observable.throw(errMsg);
     }
 }

@@ -4,18 +4,27 @@ import { Page } from './page';
 
 export class Chapter {
 
-    id:            string;
-    title:         string;
-    description:   string;
-    pages:         Page[];
+    id:               string;
+    title:            string;
+    rawDescription:   string;
+    description:      string;
+    pageIds:          string[];
+    pages:            Page[];
 
-    constructor(id: string, title: string, description: string) {
+    constructor(chapter: any) {
 
-        this.id = id;
-        this.title = title;
-        this.description = markdown.makeHtml(description);
-        this.pages = [];
-
+        this.id = chapter.id;
+        this.title = chapter.title;
+        this.rawDescription = chapter.description;
+        this.description = markdown.makeHtml(chapter.description);
+        this.pageIds = chapter.page_ids;
+        if (chapter.pages) {
+            this.pages = []
+            chapter.pages.forEach((page:any) => {
+                this.pages.push(new Page(page));
+            });
+        }
+        
     }
 
 }
