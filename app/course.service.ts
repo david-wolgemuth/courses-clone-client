@@ -8,6 +8,7 @@ import './rxjs-operators';
 import { Course } from './course';
 import { Chapter } from './chapter';
 import { Page } from './page';
+import { User } from './user';
 
 import markdown from './markdown';
 
@@ -16,24 +17,32 @@ export class CourseService {
 
     private _url = 'http://localhost:3000';
     private _courses: Course[] = [];
+    private _user: User = null;
     private headers = new Headers({ 'Content-Type': 'application/json' });
     private options: RequestOptions;
 
     constructor(private http: Http) {
         this.options = new RequestOptions({ headers: this.headers });
     }
-    authenticate(email: string, password: string): Promise<any> {
-        return this.http.post(`${this._url}/sessions`, { 
+    authenticate(email: string, password: string): Promise<boolean> {
+        return this.post(`/sessions`, { 
             email: email,
             password: password
-        }, this.options).map((res: Response) => {
+        }).then((res: Response) => {
             let body = res.json();
-            return body.data || {};
-        }).toPromise()
+            if (body.user) {
+                this._user = new User(body.user);
+            }
+            return this._user !== null;
+        });
+    }
+    post(url: string, data: any): Promise<any> {
+        return this.http.post(`${this._url}${url}`, data, this.options).toPromise()
         .catch(this.handleError);
     }
     get(url: string): Promise<any> {
-        return this.http.get(`${this._url}${url}`, this.options).toPromise();
+        return this.http.get(`${this._url}${url}`, this.options).toPromise()
+        .catch(this.handleError);
     }
     courses(): Promise<Course[]> {
         if (this._courses.length > 0) {
@@ -46,7 +55,7 @@ export class CourseService {
                 return new Course(course);
             })
             return this._courses;
-        })//.toPromise();
+        });
     }
     course(id: string): Promise<Course> {
         var index: number = 0;

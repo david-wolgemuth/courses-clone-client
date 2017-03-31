@@ -40,9 +40,9 @@ export class CourseComponent implements OnInit {
                 setTimeout(() => {
                     const id = `#${ this.course.id }`;
                     $('html, body').animate({
-                        scrollTop: $(id).offset().top - 70;
+                        scrollTop: $(id).offset().top - 70
                     }, 300);
-                }, 600);
+                }, 300);
             });
         });
     }

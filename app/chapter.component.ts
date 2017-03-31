@@ -43,9 +43,9 @@ export class ChapterComponent implements OnInit {
                 setTimeout(() => {
                     const id = `#${ this.course.id }-${ this.chapter.id }`;
                     $('html, body').animate({
-                        scrollTop: $(id).offset().top - 70;
+                        scrollTop: $(id).offset().top - 70
                     }, 300);
-                }, 600);
+                }, 300);
             });
         });
     }

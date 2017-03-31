@@ -1,5 +1,6 @@
 
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { CourseService } from './course.service';
 
@@ -9,10 +10,15 @@ import { CourseService } from './course.service';
 export class LoginComponent {
     email = 'james@brown.com';
     password = 'asdf';
-    constructor(private courseService: CourseService) {
+    constructor(private courseService: CourseService, private router: Router) {
 
     }
     login() {
         this.courseService.authenticate(this.email, this.password)
+        .then(success => {
+            if (success) {
+                this.router.navigate(['/courses']);
+            }
+        })
     }
 }

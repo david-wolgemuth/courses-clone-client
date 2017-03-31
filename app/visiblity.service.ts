@@ -15,7 +15,7 @@ export class VisibilityService {
     chapterSetCallbacks: ((chapter: Chapter) => void)[] = []
     pageSetCallbacks:    ((page: Page) => void)[] = []
 
-    setVisible(object: Course|Chapter|Page, finished: () => ()) {
+    setVisible(object: Course|Chapter|Page, finished: () => void) {
         if (object instanceof Course) {
             this.course = object;
             this.courseSetCallbacks.forEach(cb => {
